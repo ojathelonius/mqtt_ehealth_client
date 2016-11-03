@@ -59,7 +59,7 @@ See https://www.cloudmqtt.com/ for a free hosted broker
 ```
 sudo apt-get install mosquitto-dev
 sudo service mosquitto start
-mosquitto_sub -h <broker_adress> -t topic
+mosquitto_sub -h <broker_adress> -t <topic>
 ```
 Make sure you start mosquitto_sub before sending any data.
 
