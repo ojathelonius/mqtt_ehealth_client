@@ -1,4 +1,5 @@
 # mqtt_ehealth_client
+Intégration de la librairie Paho MQTT en C++ sur un Raspberry Pi
 
 ## Getting started
 ### Installer openSSL
