@@ -7,20 +7,19 @@
 #include <cstring>
 #include "mqtt/async_client.h"
 #include "mqtt/mqtt_client.h"
-// #include "mqtt/connect_options.h"
 
-// Définition des constantes globales
-const std::string ADDRESS("tcp://m21.cloudmqtt.com:18103"); // adresse du broker cloudMQTT
+// Global
+const std::string ADDRESS("tcp://m21.cloudmqtt.com:18103"); // Broker adress - CloudMQTT being used here
 const std::string CLIENTID("ehealth");
 
-// Topic paramétré sur MQTT, accessible uniquement à l'utilisateur ci-dessous
+// Topic given
 const std::string TOPIC("ehealth");
 
-// Logins user cloudMQTT, vous pouvez conserver ceux-ci par défaut (droits en lecture et écriture)
+// User logins - below, those have both read and write permissions
 const std::string USER("ehealth_user");
 const std::string PASSWORD("ehealth_password");
 
-// Quality Of Service, 0 = maximum 1 msg, 1 = minimum 1 msg
+// Quality Of Service, 0 = < 1, 1 = > 1
 const int QOS = 1;
 const long TIMEOUT = 10000L;
 
@@ -28,7 +27,7 @@ class callback : public virtual mqtt::callback
 {
 public:
 	virtual void connection_lost(const std::string& cause) {
-		std::cout << "\nConnexion interrompue" << std::endl;
+		std::cout << "\nConnection interrupted" << std::endl;
 		if (!cause.empty())
 			std::cout << "\tcause: " << cause << std::endl;
 	}
@@ -36,7 +35,7 @@ public:
 	virtual void message_arrived(const std::string& topic, mqtt::message_ptr msg) {}
 
 	virtual void delivery_complete(mqtt::idelivery_token_ptr tok) {
-		std::cout << "Livraison terminée "
+		std::cout << "Delivery complete ! "
 			<< (tok ? tok->get_message_id() : -1) << std::endl;
 	}
 };
@@ -45,12 +44,12 @@ class action_listener : public virtual mqtt::iaction_listener
 {
 protected:
 	virtual void on_failure(const mqtt::itoken& tok) {
-		std::cout << "\n\tListener: échec sur le token: "
+		std::cout << "\n\tListener: token failure "
 			<< tok.get_message_id() << std::endl;
 	}
 
 	virtual void on_success(const mqtt::itoken& tok) {
-		std::cout << "\n\tListener: succès sur le token : "
+		std::cout << "\n\tListener: token success "
 			<< tok.get_message_id() << std::endl;
 	}
 };
@@ -75,7 +74,7 @@ public:
 	bool is_done() const { return done_; }
 };
 
-int envoyerVersBroker(int data){
+int sendInteger(int data){
   std::string data_string = std::to_string(data);
   char const* data_char = data_string.c_str();
   mqtt::async_client client(ADDRESS, CLIENTID);
@@ -88,11 +87,11 @@ int envoyerVersBroker(int data){
 		options.set_user_name(USER);
 		options.set_password(PASSWORD);
 		mqtt::itoken_ptr conntok = client.connect(options);
-    std::cout << "En attente de connexion..." << std::flush;
+    std::cout << "Awaiting connection..." << std::flush;
     conntok->wait_for_completion();
     std::cout << "OK" << std::endl;
 
-    std::cout << "Envoi du message..." << std::flush;
+    std::cout << "Sending message..." << std::flush;
     mqtt::idelivery_token_ptr pubtok;
     pubtok = client.publish(TOPIC, data_char, std::strlen(data_char), QOS, false);
     pubtok->wait_for_completion(TIMEOUT);
@@ -102,16 +101,16 @@ int envoyerVersBroker(int data){
 
     std::vector<mqtt::idelivery_token_ptr> toks = client.get_pending_delivery_tokens();
     if (!toks.empty())
-      std::cout << "Erreur : tokens restant à envoyer" << std::endl;
+      std::cout << "Error : pending delivery tokens remaining" << std::endl;
 
     // Déconnexion
-    std::cout << "Déconnexion..." << std::flush;
+    std::cout << "Disconnecting..." << std::flush;
     conntok = client.disconnect();
     conntok->wait_for_completion();
     std::cout << "OK" << std::endl;
   }
   catch (const mqtt::exception& exc) {
-    std::cerr << "Erreur: " << exc.what() << std::endl;
+    std::cerr << "Error: " << exc.what() << std::endl;
     return 1;
   }
 

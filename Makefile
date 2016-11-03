@@ -2,7 +2,7 @@
 
 PAHO_C_LIB ?= /usr/local/lib
 
-all: airflow
+all: example
 
 CXXFLAGS += -Wall -std=c++0x lib/mqtt_client.cpp
 CPPFLAGS += -I.. -I$(PAHO_C_LIB)/src
@@ -19,7 +19,7 @@ LDLIBS += -L../../lib -L$(PAHO_C_LIB) -lmqttpp -lpaho-mqtt3as
 
 .PHONY: clean
 clean:
-	rm -f airflow
+	rm -f example
 
 .PHONY: distclean
 distclean: clean
