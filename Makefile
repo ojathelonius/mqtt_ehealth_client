@@ -4,7 +4,7 @@ PAHO_C_LIB ?= /usr/local/lib
 
 all: airflow
 
-CXXFLAGS += -Wall -std=c++0x
+CXXFLAGS += -Wall -std=c++0x lib/mqtt_client.cpp
 CPPFLAGS += -I.. -I$(PAHO_C_LIB)/src
 
 ifdef DEBUG
@@ -16,9 +16,6 @@ else
 endif
 
 LDLIBS += -L../../lib -L$(PAHO_C_LIB) -lmqttpp -lpaho-mqtt3as
-
-async_publish: airflow.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< $(LDLIBS)
 
 .PHONY: clean
 clean:
