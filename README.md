@@ -39,7 +39,7 @@ git clone https://github.com/ojathelonius/mqtt_ehealth_client.git
 ```
 sudo make
 ```
-A l'ajout d'autres fichiers C++, il faut les ajouter dans le fichier Makefile dans all, async_publish et clean
+A l'ajout d'autres fichiers C++, il faut les ajouter dans le fichier Makefile dans all et clean
 
 ### Lancement
 ```
@@ -52,7 +52,8 @@ sudo apt-get install mosquitto-dev
 sudo service mosquitto start
 mosquitto_sub -h adresse_du_broker -t topic
 ```
-L'adresse du broker et le nom du topic sont à modifier dans les fichiers C++
+Attention, si vous publiez sur l'adresse du broker il faut lancer mosquitto_sub avant de lancer airflow !
+L'adresse du broker et le nom du topic sont actuellement à modifier dans mqtt_client.cpp .
 
 
 Problème : impossible actuellement d'authentifier l'utilisateur via login/mot de passe : problème de type ?
