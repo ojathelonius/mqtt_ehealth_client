@@ -1,77 +1,65 @@
 # mqtt_ehealth_client
-Intégration de la librairie Paho MQTT en C++ sur un Raspberry Pi
+Integrating the e-health sensors functions in the Paho C++ client for MQTT in order to send data to a remote broker on a Raspberry Pi. This fixes most issues that I found trying to deal with the C++ Paho library.
+All this project does is retrieving data from the sensors and sending it to a broker.
 
 ## Getting started
-### Installer openSSL
+### Install openSSL
 ```
 sudo apt-get install libssl-dev
 ```
 
-### Installer le client Paho MQTT en C
+### Install Paho C client
 ```
 git clone https://github.com/eclipse/paho.mqtt.c.git
 sudo make install
 ```
 
-### Installer le client Paho MQTT en C++
+### Install Paho C++ client
 ```
 git clone https://github.com/eclipse/paho.mqtt.cpp.git
 sudo make
 ```
 
-### Ajouter manuellement les librairies dans /usr/local/lib/ 
-* Copier les fichiers
+### Manually adding lib files in /usr/local/lib/ 
+* Copying files
 ```
 cd paho.mqtt.cpp/lib
 sudo cp -r . /usr/local/lib
 ```
 
-* Rafraîchir la liste des liens dynamiques
+* Updating ld
 ```
 sudo ldconfig
 ```
 
-### Récupérer le client 
+### Cloning the client on the Raspberry
 ```
 git clone https://github.com/ojathelonius/mqtt_ehealth_client.git
 ```
 
-### Renseigner l'IP du broker
+### Modify the mqtt_client file to add your own broker, credentials and topic
 ```
 cd mqtt_ehealth_client/lib/
 nano mqtt_client.cpp
 ```
 
-### Compiler le fichier airflow.cpp
+### Compile a sensor C++ file (e.g. airflow.cpp)
 ```
 sudo make
 ```
-A l'ajout d'autres fichiers C++, il faut les ajouter dans le fichier Makefile dans all et clean
+Note : if you add sensor files, make sure you also add them in the Makefile (add & clean)
 
-### Lancement
+### Start retrieving sensor data and sending it to the broker
 ```
 ./airflow
 ```
+See https://www.cloudmqtt.com/ for a free hosted broker
 
-### Tester avec Mosquitto
+### Test it using Mosquitto
 ```
 sudo apt-get install mosquitto-dev
 sudo service mosquitto start
 mosquitto_sub -h adresse_du_broker -t topic
 ```
-Attention, si vous publiez sur l'adresse du broker il faut lancer mosquitto_sub avant de lancer airflow !
-L'adresse du broker et le nom du topic sont actuellement à modifier dans mqtt_client.cpp .
+Make sure you start mosquitto_sub before sending any data.
 
-
-Problème : impossible actuellement d'authentifier l'utilisateur via login/mot de passe : problème de type ?
-
-```
-const std::string USER("nom_user");
-const std::string PASSWORD("mdp_user");
-
-// Lors de la connexion au broker, remplacer par :
-mqtt::connect_options options;
-options.set_user_name(USER);
-options.set_password(PASSWORD);
-mqtt::itoken_ptr conntok = client.connect(options);
-```
