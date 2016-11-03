@@ -2,6 +2,8 @@
 Integrating the e-health sensors functions in the Paho C++ client for MQTT in order to send data to a remote broker on a Raspberry Pi. This fixes most issues that I found trying to deal with the C++ Paho library.
 All this project does is retrieve data from the sensors and sendg it to a broker, using the airflow.cpp example (with fake data in order to work on any device).
 
+See https://github.com/ojathelonius/mqtt_ehealth_subscriber to have an overview of how to subscribe to the broker using NodeJS.
+
 ## Getting started
 ### Install openSSL
 ```
