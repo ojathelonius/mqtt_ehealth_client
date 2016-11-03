@@ -140,7 +140,10 @@ public:
 	/**
 	 * Sets the password to use for the connection.
 	 */
-	void set_password(const std::string& password);
+	void set_password(const std::string& password){
+		const char * pw = password.c_str();
+		opts_.password = pw;
+	}
 	/**
 	 * Sets the SocketFactory to use.
 	 */
@@ -153,7 +156,10 @@ public:
 	 * Sets the user name to use for the connection.
 	 * @param userName
 	 */
-	void set_user_name(const std::string& userName);
+	void set_user_name(const std::string& userName){
+		const char * usr = userName.c_str();
+		opts_.username = usr;
+	}
 	/**
 	 * Sets the "Last Will and Testament" (LWT) for the connection.
 	 * @param top
