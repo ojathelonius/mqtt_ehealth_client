@@ -24,9 +24,15 @@ sudo make
 cd home/pi/paho.mqtt.cpp/lib
 sudo cp -r . /usr/local/lib
 ```
+
 * Rafraîchir la liste des liens dynamiques
 ```
 sudo ldconfig
+```
+
+### Récupérer le client 
+```
+git clone https://github.com/ojathelonius/mqtt_ehealth_client.git
 ```
 
 ### Compiler le fichier airflow.cpp
