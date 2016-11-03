@@ -19,7 +19,7 @@ sudo make
 ```
 
 ### Ajouter manuellement les librairies dans /usr/local/lib/ 
-* Dans /home/pi/paho.mqtt.cpp/src/samples
+* Copier les fichiers
 ```
 cd home/pi/paho.mqtt.cpp/lib
 sudo cp -r . /usr/local/lib
