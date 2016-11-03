@@ -15,8 +15,10 @@ sudo make install
 git clone https://github.com/eclipse/paho.mqtt.cpp.git
 sudo make
 ```
-### Corriger le fichier Makefile de la librairie C++ 
+### Ajouter manuellement les librairies dans /usr/local/lib/ 
+* Dans /home/pi/paho.mqtt.cpp/src/samples
 ```
-git clone https://github.com/eclipse/paho.mqtt.cpp.git
-sudo make
+cd home/pi/paho.mqtt.cpp/lib
+sudo cp -r . /usr/local/lib
+sudo ldconfig // pour rafraîchir la liste des liens dynamiques
 ```
