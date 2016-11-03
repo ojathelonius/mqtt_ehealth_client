@@ -35,6 +35,11 @@ sudo make
 ```
 A l'ajout d'autres fichiers C++, il faut les ajouter dans le fichier Makefile dans all, async_publish et clean
 
+### Lancement
+```
+./airflow
+```
+
 ### Tester avec Mosquitto
 ```
 sudo apt-get install mosquitto-dev
@@ -42,3 +47,17 @@ sudo service mosquitto start
 mosquitto_sub -h adresse_du_broker -t topic
 ```
 L'adresse du broker et le nom du topic sont à modifier dans les fichiers C++
+
+
+Problème : impossible actuellement d'authentifier l'utilisateur via login/mot de passe : problème de type ?
+
+```
+const std::string USER("nom_user");
+const std::string PASSWORD("mdp_user");
+
+// Lors de la connexion au broker, remplacer par :
+mqtt::connect_options options;
+options.set_user_name(USER);
+options.set_password(PASSWORD);
+mqtt::itoken_ptr conntok = client.connect(options);
+```
