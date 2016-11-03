@@ -7,12 +7,20 @@
 #include <cstring>
 #include "mqtt/async_client.h"
 #include "mqtt/mqtt_client.h"
+// #include "mqtt/connect_options.h"
 
 // Définition des constantes globales
-const std::string ADDRESS("tcp://localhost:1883"); // à changer pour y mettre l'adresse du broker
-const std::string CLIENTID("AsyncPublisher");
+const std::string ADDRESS("tcp://m21.cloudmqtt.com:18103"); // adresse du broker cloudMQTT
+const std::string CLIENTID("ehealth");
+
+// Topic paramétré sur MQTT, accessible uniquement à l'utilisateur ci-dessous
 const std::string TOPIC("ehealth");
 
+// Logins user cloudMQTT, vous pouvez conserver ceux-ci par défaut (droits en lecture et écriture)
+const std::string USER("ehealth_user");
+const std::string PASSWORD("ehealth_password");
+
+// Quality Of Service, 0 = maximum 1 msg, 1 = minimum 1 msg
 const int QOS = 1;
 const long TIMEOUT = 10000L;
 
@@ -76,8 +84,10 @@ int envoyerVersBroker(int data){
   client.set_callback(cb);
 
   try {
-
-    mqtt::itoken_ptr conntok = client.connect();
+		mqtt::connect_options options;
+		options.set_user_name(USER);
+		options.set_password(PASSWORD);
+		mqtt::itoken_ptr conntok = client.connect(options);
     std::cout << "En attente de connexion..." << std::flush;
     conntok->wait_for_completion();
     std::cout << "OK" << std::endl;
