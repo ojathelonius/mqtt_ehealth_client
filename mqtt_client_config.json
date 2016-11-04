@@ -1,0 +1,17 @@
+{
+    "host_info": {
+        "host_address": "m21.cloudmqtt.com",
+        "port": 18103
+    },
+    "user_credentials": {
+        "user": "ehealth_user",
+        "password": "ehealth_password",
+        "client_id": "ehealth"
+    },
+    "options": {
+        "topic": "ehealth",
+        "delay": 50,
+        "qos": 1,
+        "timeout": "10000L"
+    }
+}
