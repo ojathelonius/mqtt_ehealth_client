@@ -7,21 +7,8 @@
 #include <cstring>
 #include "mqtt/async_client.h"
 #include "mqtt/mqtt_client.h"
+#include "mqtt/mqtt_client_config.h"
 
-// Global
-const std::string ADDRESS("tcp://m21.cloudmqtt.com:18103"); // Broker adress - CloudMQTT being used here
-const std::string CLIENTID("ehealth");
-
-// Topic given
-const std::string TOPIC("ehealth");
-
-// User logins - below, those have both read and write permissions
-const std::string USER("ehealth_user");
-const std::string PASSWORD("ehealth_password");
-
-// Quality Of Service, 0 = < 1, 1 = > 1
-const int QOS = 1;
-const long TIMEOUT = 10000L;
 
 class callback : public virtual mqtt::callback
 {
@@ -77,15 +64,15 @@ public:
 int sendInteger(int data){
   std::string data_string = std::to_string(data);
   char const* data_char = data_string.c_str();
-  mqtt::async_client client(ADDRESS, CLIENTID);
+  mqtt::async_client client("tcp://"+mqtt_client_config.host_address+":"+std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
 
   callback cb;
   client.set_callback(cb);
 
   try {
 		mqtt::connect_options options;
-		options.set_user_name(USER);
-		options.set_password(PASSWORD);
+		options.set_user_name(mqtt_client_config.user);
+		options.set_password(mqtt_client_config.password);
 		mqtt::itoken_ptr conntok = client.connect(options);
     std::cout << "Awaiting connection..." << std::flush;
     conntok->wait_for_completion();
@@ -93,8 +80,8 @@ int sendInteger(int data){
 
     std::cout << "Sending message..." << std::flush;
     mqtt::idelivery_token_ptr pubtok;
-    pubtok = client.publish(TOPIC, data_char, std::strlen(data_char), QOS, false);
-    pubtok->wait_for_completion(TIMEOUT);
+    pubtok = client.publish(mqtt_client_config.topic, data_char, std::strlen(data_char), mqtt_client_config.qos, false);
+    pubtok->wait_for_completion(mqtt_client_config.timeout);
     std::cout << "OK" << std::endl;
 
     // Tokens restants
