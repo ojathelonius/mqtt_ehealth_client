@@ -4,7 +4,7 @@ PAHO_C_LIB ?= /usr/local/lib
 
 all: example
 
-CXXFLAGS += -Wall -std=c++0x lib/mqtt_client.cpp
+CXXFLAGS += -Wall -std=c++0x lib/mqtt_client.cpp lib/mqtt_client_config.cpp lib/jsoncpp.cpp
 CPPFLAGS += -I.. -I$(PAHO_C_LIB)/src
 
 ifdef DEBUG

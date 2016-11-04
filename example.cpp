@@ -6,14 +6,17 @@
 #include <string>
 #include <thread>
 #include "lib/mqtt/mqtt_client.h"
+#include "lib/mqtt/mqtt_client_config.h"
 // Enable below to make it work on Raspberry
 // #include "eHealth.h"
 
-const int DELAY = 50;
+Mqtt_client_config mqtt_client_config;
 
 inline void sleep(int ms) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
+
+void loop();
 
 // Getting random data for demo purposes
 int getAirFlow(){
@@ -24,12 +27,14 @@ void loop() {
 	// Enable below to make it work on the Raspberry, using airflow data
 	// int air = eHealth.getAirFlow();
 	// eHealth.airFlowWave(air);
+
 	int air = getAirFlow();
   sendInteger(air);
-	sleep(DELAY);
+	sleep(mqtt_client_config.delay);
 }
 
 int main (){
+	loadConfig();
 	while(1){
 		loop();
 	}
