@@ -61,7 +61,7 @@ public:
 	bool is_done() const { return done_; }
 };
 
-int sendInteger(int data){
+bool sendInteger(int data){
   std::string data_string = std::to_string(data);
   char const* data_char = data_string.c_str();
   mqtt::async_client client("tcp://"+mqtt_client_config.host_address+":"+std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
@@ -98,8 +98,8 @@ int sendInteger(int data){
   }
   catch (const mqtt::exception& exc) {
     std::cerr << "Error: " << exc.what() << std::endl;
-    return 1;
+    return true;
   }
 
-  return 0;
+  return false;
 }
