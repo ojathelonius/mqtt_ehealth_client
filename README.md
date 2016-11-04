@@ -39,11 +39,7 @@ sudo ldconfig
 git clone https://github.com/ojathelonius/mqtt_ehealth_client.git
 ```
 
-### Modify the mqtt_client file to add your own broker, credentials and topic
-```
-cd mqtt_ehealth_client/lib/
-nano mqtt_client.cpp
-```
+### Modify the mqtt_client_config.JSON file to add your broker IP, credentials and options
 
 ### Compile a sensor C++ file (e.g. airflow.cpp)
 ```
