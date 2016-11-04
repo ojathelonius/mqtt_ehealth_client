@@ -29,7 +29,14 @@ void loop() {
 	// eHealth.airFlowWave(air);
 
 	int air = getAirFlow();
-  sendInteger(air);
+	// Syntax is the following : sendFunction(data, "type", true);
+
+	// Example sending an integer value
+  sendInteger(air, "airflow", true);
+
+	// Example sending a string value
+	sendString("data_as_a_string", "string_type", true);
+	
 	sleep(mqtt_client_config.delay);
 }
 
