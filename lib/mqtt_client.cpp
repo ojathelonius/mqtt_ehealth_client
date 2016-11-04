@@ -84,13 +84,13 @@ int sendInteger(int data){
     pubtok->wait_for_completion(mqtt_client_config.timeout);
     std::cout << "OK" << std::endl;
 
-    // Tokens restants
+    // Remaining tokens
 
     std::vector<mqtt::idelivery_token_ptr> toks = client.get_pending_delivery_tokens();
     if (!toks.empty())
       std::cout << "Error : pending delivery tokens remaining" << std::endl;
 
-    // Déconnexion
+    // Disconnecting
     std::cout << "Disconnecting..." << std::flush;
     conntok = client.disconnect();
     conntok->wait_for_completion();
