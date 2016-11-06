@@ -72,7 +72,7 @@ bool sendInteger(int data, std::string type, bool with_timestamp) {
 		std::string string_json;
 
     if (with_timestamp) {
-        string_json = "{ type : \"" + type + "\", data : " + data_string + ", timestamp : " + std::to_string(std::time(0)) + " }";
+        string_json = "{ type : \"" + type + "\", data : " + data_string +", client_id : \""+mqtt_client_config.client_id+"\", timestamp : " + std::to_string(std::time(0)) + " }";
     }
     else
     {
@@ -123,7 +123,7 @@ bool sendString(std::string data, std::string type, bool with_timestamp) {
     // 	{ type : "string_type", data : "some string", timestamp : 1478294311 }
 		std::string string_json;
     if (with_timestamp) {
-        string_json = "{ type : \"" + type + "\", data : \"" + data + "\", timestamp : " + std::to_string(std::time(0)) + " }";
+        string_json = "{ type : \"" + type + "\", data : \"" + data + ", client_id : \""+mqtt_client_config.client_id+"\", timestamp : " + std::to_string(std::time(0)) + " }";
     }
     else
     {
