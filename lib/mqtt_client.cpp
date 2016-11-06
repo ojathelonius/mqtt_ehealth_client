@@ -67,7 +67,7 @@ public:
 
 bool sendInteger(int data, std::string type, bool with_timestamp) {
     // Final JSON output looks like the following :
-    // { type : "type", data : 433, timestamp : 1478294310 }
+    // { type : "type", data : 433, client_id : "client_id", timestamp : 1478294310 }
     std::string data_string = std::to_string(data);
 		std::string string_json;
 
@@ -120,7 +120,7 @@ bool sendInteger(int data, std::string type, bool with_timestamp) {
 
 bool sendString(std::string data, std::string type, bool with_timestamp) {
     // Final JSON output looks like the following :
-    // 	{ type : "string_type", data : "some string", timestamp : 1478294311 }
+    // 	{ type : "string_type", data : "some string", client_id : "client_id", timestamp : 1478294311 }
 		std::string string_json;
     if (with_timestamp) {
         string_json = "{ type : \"" + type + "\", data : \"" + data + ", client_id : \""+mqtt_client_config.client_id+"\", timestamp : " + std::to_string(std::time(0)) + " }";
