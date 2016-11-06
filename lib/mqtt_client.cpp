@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstring>
 #include <ctime>
+#include <memory>
 #include "mqtt/async_client.h"
 #include "mqtt/mqtt_client.h"
 #include "mqtt/mqtt_client_config.h"
@@ -65,11 +66,51 @@ public:
     }
 };
 
+
+std::shared_ptr<mqtt::iasync_client>connectTo() {
+    mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
+
+    callback cb;
+    mqtt::itoken_ptr conntok;
+
+    client.set_callback(cb);
+
+    try {
+        mqtt::connect_options options;
+        options.set_user_name(mqtt_client_config.user);
+        options.set_password(mqtt_client_config.password);
+        conntok = client.connect(options);
+        std::cout << "Awaiting connection..." << std::flush;
+        conntok->wait_for_completion();
+        std::cout << "OK" << std::endl;
+    }
+    catch (const mqtt::exception& exc) {
+        std::cerr << "Error: " << exc.what() << std::endl;
+        return conntok->get_client();
+    }
+    return conntok->get_client();
+}
+
+bool disconnectFrom(std::shared_ptr<mqtt::iasync_client>client) {
+    mqtt::itoken_ptr conntok;
+    std::cout << "Disconnecting..." << std::flush;
+    try {
+        conntok = client->disconnect();
+        conntok->wait_for_completion();
+        std::cout << "OK" << std::endl;
+    }
+    catch (const mqtt::exception& exc) {
+        std::cerr << "Error: " << exc.what() << std::endl;
+        return true;
+    }
+    return false;
+}
+
 bool sendInteger(int data, std::string type, bool with_timestamp) {
     // Final JSON output looks like the following :
     // { type : "type", data : 433, timestamp : 1478294310 }
     std::string data_string = std::to_string(data);
-		std::string string_json;
+    std::string string_json;
 
     if (with_timestamp) {
         string_json = "{ type : \"" + type + "\", data : " + data_string + ", timestamp : " + std::to_string(std::time(0)) + " }";
@@ -118,10 +159,11 @@ bool sendInteger(int data, std::string type, bool with_timestamp) {
     return false;
 }
 
-bool sendString(std::string data, std::string type, bool with_timestamp) {
+std::shared_ptr<mqtt::itoken>sendString(std::string data, std::string type, bool with_timestamp) {
     // Final JSON output looks like the following :
-    // 	{ type : "string_type", data : "some string", timestamp : 1478294311 }
-		std::string string_json;
+    //  { type : "string_type", data : "some string", timestamp : 1478294311 }
+    std::string string_json;
+
     if (with_timestamp) {
         string_json = "{ type : \"" + type + "\", data : \"" + data + "\", timestamp : " + std::to_string(std::time(0)) + " }";
     }
@@ -134,14 +176,14 @@ bool sendString(std::string data, std::string type, bool with_timestamp) {
     mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
 
     callback cb;
-
+    mqtt::itoken_ptr conntok;
     client.set_callback(cb);
 
     try {
         mqtt::connect_options options;
         options.set_user_name(mqtt_client_config.user);
         options.set_password(mqtt_client_config.password);
-        mqtt::itoken_ptr conntok = client.connect(options);
+        conntok = client.connect(options);
         std::cout << "Awaiting connection..." << std::flush;
         conntok->wait_for_completion();
         std::cout << "OK" << std::endl;
@@ -166,7 +208,7 @@ bool sendString(std::string data, std::string type, bool with_timestamp) {
     }
     catch (const mqtt::exception& exc) {
         std::cerr << "Error: " << exc.what() << std::endl;
-        return true;
+        return conntok;
     }
-    return false;
+    return conntok;
 }
