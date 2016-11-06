@@ -67,12 +67,12 @@ public:
 };
 
 
-std::shared_ptr<mqtt::iasync_client>connectTo() {
+mqtt::iasync_client* connectTo() {
     mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
 
     callback cb;
     mqtt::itoken_ptr conntok;
-
+    mqtt::iasync_client* client_return;
     client.set_callback(cb);
 
     try {
@@ -80,18 +80,19 @@ std::shared_ptr<mqtt::iasync_client>connectTo() {
         options.set_user_name(mqtt_client_config.user);
         options.set_password(mqtt_client_config.password);
         conntok = client.connect(options);
+        client_return = conntok->get_client();
         std::cout << "Awaiting connection..." << std::flush;
         conntok->wait_for_completion();
         std::cout << "OK" << std::endl;
     }
     catch (const mqtt::exception& exc) {
         std::cerr << "Error: " << exc.what() << std::endl;
-        return conntok->get_client();
+        // return client_return;
     }
-    return conntok->get_client();
+    return client_return;
 }
 
-bool disconnectFrom(std::shared_ptr<mqtt::iasync_client>client) {
+bool disconnectFrom(mqtt::iasync_client* client) {
     mqtt::itoken_ptr conntok;
     std::cout << "Disconnecting..." << std::flush;
     try {

@@ -36,7 +36,7 @@ void loop() {
 	//
 	// // Example sending a string value
 	// sendString("data_as_a_string", "string_type", true);
-	std::shared_ptr<mqtt::iasync_client> my_client = connectTo();
+	mqtt::iasync_client* my_client = connectTo();
 	disconnectFrom(my_client);
 	sleep(mqtt_client_config.delay);
 }
