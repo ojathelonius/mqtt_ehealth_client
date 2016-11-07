@@ -72,11 +72,11 @@ bool sendInteger(int data, std::string type, bool with_timestamp) {
 		std::string string_json;
 
     if (with_timestamp) {
-        string_json = "{ type : \"" + type + "\", data : " + data_string +", client_id : \""+mqtt_client_config.client_id+"\", timestamp : " + std::to_string(std::time(0)) + " }";
+        string_json = "{ \"type\" : \"" + type + "\", \"data\" : " + data_string +", \"client_id\" : \""+mqtt_client_config.client_id+"\", \"timestamp\" : " + std::to_string(std::time(0)) + " }";
     }
     else
     {
-        string_json = "{ type : \"" + type + "\", data : " + data_string + ", client_id : \""+mqtt_client_config.client_id+"\" }";
+        string_json = "{ \"type\" : \"" + type + "\", \"data\" : " + data_string + ", \"client_id\" : \""+mqtt_client_config.client_id+"\" }";
     }
     char const *char_json = string_json.c_str();
     mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
@@ -123,11 +123,11 @@ bool sendString(std::string data, std::string type, bool with_timestamp) {
     // 	{ type : "string_type", data : "some string", client_id : "client_id", timestamp : 1478294311 }
 		std::string string_json;
     if (with_timestamp) {
-        string_json = "{ type : \"" + type + "\", data : \"" + data + ", client_id : \""+mqtt_client_config.client_id+"\", timestamp : " + std::to_string(std::time(0)) + " }";
+        string_json = "{ \"type\" : \"" + type + "\", \"data\" : \"" + data + "\", \"client_id\" : \""+mqtt_client_config.client_id+"\", \"timestamp\" : " + std::to_string(std::time(0)) + " }";
     }
     else
     {
-        string_json = "{ type : \"" + type + "\", data : \"" + data + "\", client_id : \""+mqtt_client_config.client_id+"\" }";
+        string_json = "{ \"type\" : \"" + type + "\", \"data\" : \"" + data + "\", \"client_id\" : \""+mqtt_client_config.client_id+"\" }";
     }
 
     char const *char_json = string_json.c_str();
