@@ -10,7 +10,7 @@
     },
     "options": {
         "topic": "ehealth",
-        "delay": 50,
+        "delay": 1000,
         "qos": 1,
         "timeout": "10000L"
     }
