@@ -28,7 +28,7 @@ void loop() {
 	// int air = eHealth.getAirFlow();
 	// eHealth.airFlowWave(air);
 
-	// int air = getAirFlow();
+	int air = getAirFlow();
 	// // Syntax is the following : sendFunction(data, "type", true);
 	//
 	// // Example sending an integer value
@@ -36,8 +36,10 @@ void loop() {
 	//
 	// // Example sending a string value
 	// sendString("data_as_a_string", "string_type", true);
-	mqtt::iasync_client* my_client = connectTo();
-	disconnectFrom(my_client);
+	mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
+	connectTo(client);
+	sendInteger(client, air, "airflow", true);
+	disconnectFrom(client);
 	sleep(mqtt_client_config.delay);
 }
 

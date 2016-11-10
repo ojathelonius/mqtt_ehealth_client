@@ -10,9 +10,9 @@ extern "C" {
 #include "async_client.h"
 #include "token.h"
 
-bool sendInteger(int data, std::string type, bool with_timestamp);
-bool disconnectFrom(mqtt::iasync_client* client);
+bool sendInteger(mqtt::iasync_client &client, int data, std::string type, bool with_timestamp);
+bool disconnectFrom(mqtt::iasync_client &client);
 std::shared_ptr<mqtt::itoken> sendString(std::string data, std::string type, bool with_timestamp);
-mqtt::iasync_client* connectTo();
+void connectTo(mqtt::iasync_client &client);
 
 #endif

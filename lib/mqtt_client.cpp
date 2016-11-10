@@ -67,88 +67,33 @@ public:
 };
 
 
-mqtt::iasync_client* connectTo() {
-    mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
-
+void connectTo(mqtt::iasync_client& client) {
     callback cb;
-    mqtt::itoken_ptr conntok;
-    mqtt::iasync_client* client_return;
+
     client.set_callback(cb);
+
+    mqtt::itoken_ptr conntok;
+
 
     try {
         mqtt::connect_options options;
         options.set_user_name(mqtt_client_config.user);
         options.set_password(mqtt_client_config.password);
         conntok = client.connect(options);
-        client_return = conntok->get_client();
         std::cout << "Awaiting connection..." << std::flush;
         conntok->wait_for_completion();
         std::cout << "OK" << std::endl;
     }
     catch (const mqtt::exception& exc) {
         std::cerr << "Error: " << exc.what() << std::endl;
-        // return client_return;
     }
-    return client_return;
 }
 
-bool disconnectFrom(mqtt::iasync_client* client) {
+bool disconnectFrom(mqtt::iasync_client& client) {
     mqtt::itoken_ptr conntok;
+
     std::cout << "Disconnecting..." << std::flush;
     try {
-        conntok = client->disconnect();
-        conntok->wait_for_completion();
-        std::cout << "OK" << std::endl;
-    }
-    catch (const mqtt::exception& exc) {
-        std::cerr << "Error: " << exc.what() << std::endl;
-        return true;
-    }
-    return false;
-}
-
-bool sendInteger(int data, std::string type, bool with_timestamp) {
-    // Final JSON output looks like the following :
-    // { type : "type", data : 433, client_id : "client_id", timestamp : 1478294310 }
-    std::string data_string = std::to_string(data);
-    std::string string_json;
-
-    if (with_timestamp) {
-        string_json = "{ type : \"" + type + "\", data : " + data_string +", client_id : \""+mqtt_client_config.client_id+"\", timestamp : " + std::to_string(std::time(0)) + " }";
-    }
-    else
-    {
-        string_json = "{ type : \"" + type + "\", data : " + data_string + " }";
-    }
-    char const *char_json = string_json.c_str();
-    mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
-
-    callback cb;
-
-    client.set_callback(cb);
-
-    try {
-        mqtt::connect_options options;
-        options.set_user_name(mqtt_client_config.user);
-        options.set_password(mqtt_client_config.password);
-        mqtt::itoken_ptr conntok = client.connect(options);
-        std::cout << "Awaiting connection..." << std::flush;
-        conntok->wait_for_completion();
-        std::cout << "OK" << std::endl;
-
-        std::cout << "Sending message..." << std::flush;
-        mqtt::idelivery_token_ptr pubtok;
-        pubtok = client.publish(mqtt_client_config.topic, char_json, std::strlen(char_json), mqtt_client_config.qos, false);
-        pubtok->wait_for_completion(mqtt_client_config.timeout);
-        std::cout << "OK" << std::endl;
-
-        // Remaining tokens
-        std::vector<mqtt::idelivery_token_ptr> toks = client.get_pending_delivery_tokens();
-
-        if (!toks.empty()) std::cout << "Error : pending delivery tokens remaining" << std::endl;
-
-        // Disconnecting
-        std::cout << "Disconnecting..." << std::flush;
         conntok = client.disconnect();
         conntok->wait_for_completion();
         std::cout << "OK" << std::endl;
@@ -160,12 +105,55 @@ bool sendInteger(int data, std::string type, bool with_timestamp) {
     return false;
 }
 
+bool sendInteger(mqtt::iasync_client& client, int data, std::string type, bool with_timestamp) {
+    // Final JSON output looks like the following :
+    // { type : "type", data : 433, client_id : "client_id", timestamp : 1478294310 }
+    std::string data_string = std::to_string(data);
+    std::string string_json;
+
+    if (with_timestamp) {
+        string_json = "{ type : \"" + type + "\", data : " + data_string + ", client_id : \"" + mqtt_client_config.client_id + "\", timestamp : " + std::to_string(std::time(0)) + " }";
+    }
+    else
+    {
+        string_json = "{ type : \"" + type + "\", data : " + data_string + " }";
+    }
+    char const *char_json = string_json.c_str();
+
+    if(client.is_connected()){
+      std::cout << "Client connected" << std::endl;
+      try {
+          std::cout << "Sending message..." << std::flush;
+          mqtt::idelivery_token_ptr pubtok;
+          pubtok = client.publish(mqtt_client_config.topic, char_json, std::strlen(char_json), mqtt_client_config.qos, false);
+          std::cout << "Everything looks good" << std::endl;
+          std::cout << pubtok->get_client() << std::endl;
+          pubtok->wait_for_completion(mqtt_client_config.timeout);
+          std::cout << "OK" << std::endl;
+
+          // Remaining tokens
+          std::vector<mqtt::idelivery_token_ptr> toks = client.get_pending_delivery_tokens();
+
+          if (!toks.empty()) std::cout << "Error : pending delivery tokens remaining" << std::endl;
+      }
+      catch (const mqtt::exception& exc) {
+          std::cerr << "Error: " << exc.what() << std::endl;
+          return true;
+      }
+    }
+    else{
+      std::cout << "Client not connected";
+    }
+    return false;
+}
+
 std::shared_ptr<mqtt::itoken>sendString(std::string data, std::string type, bool with_timestamp) {
     // Final JSON output looks like the following :
-    // 	{ type : "string_type", data : "some string", client_id : "client_id", timestamp : 1478294311 }
-		std::string string_json;
+    //  { type : "string_type", data : "some string", client_id : "client_id", timestamp : 1478294311 }
+    std::string string_json;
+
     if (with_timestamp) {
-        string_json = "{ type : \"" + type + "\", data : \"" + data + ", client_id : \""+mqtt_client_config.client_id+"\", timestamp : " + std::to_string(std::time(0)) + " }";
+        string_json = "{ type : \"" + type + "\", data : \"" + data + ", client_id : \"" + mqtt_client_config.client_id + "\", timestamp : " + std::to_string(std::time(0)) + " }";
     }
     else
     {
