@@ -110,6 +110,8 @@ bool sendInteger(mqtt::iasync_client& client, int data, std::string type, bool w
     // { type : "type", data : 433, client_id : "client_id", timestamp : 1478294310 }
     std::string data_string = std::to_string(data);
     std::string string_json;
+    callback cb;
+	  client.set_callback(cb);
 
     if (with_timestamp) {
         string_json = "{ type : \"" + type + "\", data : " + data_string + ", client_id : \"" + mqtt_client_config.client_id + "\", timestamp : " + std::to_string(std::time(0)) + " }";
@@ -126,8 +128,6 @@ bool sendInteger(mqtt::iasync_client& client, int data, std::string type, bool w
           std::cout << "Sending message..." << std::flush;
           mqtt::idelivery_token_ptr pubtok;
           pubtok = client.publish(mqtt_client_config.topic, char_json, std::strlen(char_json), mqtt_client_config.qos, false);
-          std::cout << "Everything looks good" << std::endl;
-          std::cout << pubtok->get_client() << std::endl;
           pubtok->wait_for_completion(mqtt_client_config.timeout);
           std::cout << "OK" << std::endl;
 
