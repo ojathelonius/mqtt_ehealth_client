@@ -4,7 +4,7 @@ PAHO_C_LIB ?= /usr/local/lib
 
 all: example
 
-CXXFLAGS += -Wall -std=c++0x lib/mqtt_client.cpp lib/mqtt_client_config.cpp lib/jsoncpp.cpp
+CXXFLAGS += -Wall -std=c++0x -fpermissive lib/mqtt_client.cpp lib/mqtt_client_config.cpp lib/jsoncpp.cpp lib/eHealth.cpp lib/arduPi.cpp
 CPPFLAGS += -I.. -I$(PAHO_C_LIB)/src
 
 ifdef DEBUG
@@ -15,7 +15,7 @@ else
   CXXFLAGS += -O2
 endif
 
-LDLIBS += -L../../lib -L$(PAHO_C_LIB) -lmqttpp -lpaho-mqtt3as
+LDLIBS += -L../../lib -L$(PAHO_C_LIB) -lmqttpp -lpaho-mqtt3as -lbcm2835 -lpthread -lrt
 
 .PHONY: clean
 clean:
