@@ -4,7 +4,7 @@ All this project does is retrieve data from the sensors and send it to a broker,
 
 See https://github.com/ojathelonius/mqtt_ehealth_subscriber to have an overview of how to subscribe to the broker using NodeJS.
 
-Important note : the **master branch** allows **simulating data** received from eHealth sensors. The **dev branch** allows you to receive actual data from the sensors, thus includes eHealth and arduPi libraries. Please check out the dev branch if you want to make it work on a Raspberry.
+Important note : the **master branch** allows **simulating data** received from eHealth sensors. The **dev branch** allows you to receive **actual data** from the sensors, thus includes eHealth and arduPi libraries. Please check out the dev branch if you want to make it work on a Raspberry.
 
 ## Getting started
 ### Install openSSL
