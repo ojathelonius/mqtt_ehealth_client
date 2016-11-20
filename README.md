@@ -4,6 +4,8 @@ All this project does is retrieve data from the sensors and send it to a broker,
 
 See https://github.com/ojathelonius/mqtt_ehealth_subscriber to have an overview of how to subscribe to the broker using NodeJS.
 
+Important note : the **master branch** allows **simulating data** received from eHealth sensors. The **dev branch** allows you to receive **actual data** from the sensors, thus includes eHealth and arduPi libraries. Please check out the dev branch if you want to make it work on a Raspberry.
+
 ## Getting started
 ### Install openSSL
 ```
@@ -41,7 +43,7 @@ git clone https://github.com/ojathelonius/mqtt_ehealth_client.git
 Modify the mqtt_client_config.JSON file to add your broker IP, credentials and options
 
 
-### Compile a sensor C++ file (e.g. airflow.cpp)
+### Compile a sensor C++ file (e.g. example.cpp)
 ```
 sudo make
 ```
@@ -50,7 +52,7 @@ Note : if you add sensor files, make sure you also add them in the Makefile (add
 
 ### Start retrieving sensor data and sending it to the broker
 ```
-./example
+sudo ./example
 ```
 See https://www.cloudmqtt.com/ for a free hosted broker
 
