@@ -1,11 +1,11 @@
 {
     "host_info": {
-        "host_address": "m21.cloudmqtt.com",
-        "port": 18103
+        "host_address": "api.johanet.fr",
+        "port": 1883
     },
     "user_credentials": {
-        "user": "ehealth_user",
-        "password": "ehealth_password",
+        "user": "ehealth",
+        "password": "password",
         "client_id": "ehealth"
     },
     "options": {
