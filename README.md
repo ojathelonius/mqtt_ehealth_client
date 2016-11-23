@@ -54,14 +54,49 @@ Note : if you add sensor files, make sure you also add them in the Makefile (add
 ```
 ./example
 ```
-See https://www.cloudmqtt.com/ for a free hosted broker
+See https://www.cloudmqtt.com/ for a free hosted broker. Or see below to learn how to host your own mosquitto broker (on a VPS for instance).
 
+### Host your own Mosquitto broker
+* Install Mosquitto (on your VPS)
+```
+apt-get update
+apt-get install build-essential libwrap0-dev libssl-dev libc-ares-dev uuid-dev xsltproc
+sudo apt-get install mosquitto
+```
+* Create a new user and store its credentials in a password file
+```
+mosquitto_passwd -c /etc/mosquitto/pwfile
+```
+* Create a new configuration file from the example
+```
+cp /etc/mosquitto/mosquitto.conf.example /etc/mosquitto/mosquitto.conf
+nano /etc/mosquitto/mosquitto.conf
+```
+* Add your own info in mosquitto.conf
+```
+listener 1883 <VPS_IP>
+connection_messages true
+log_timestamp true
+allow_anonymous false
+password_file /etc/mosquitto/pwfile
+```
+* Update links
+```
+/sbin/ldconfig
+```
+* Start the broker in the background
+```
+mosquitto -c -d /etc/mosquitto/mosquitto.conf
+```
 
-### Test it using Mosquitto
+### Test it 
+* If you didn't install your own broker
 ```
 sudo apt-get install mosquitto-dev
 sudo service mosquitto start
-mosquitto_sub -h <broker_adress> -t <topic>
+mosquitto_sub -h 127.0.0.1 -t <topic>
 ```
-Make sure you start mosquitto_sub before sending any data.
-
+* With your own broker
+```
+mosquitto_sub -h <broker_adress> -P <port> -t <topic> -u <user> -p <password> 
+```
