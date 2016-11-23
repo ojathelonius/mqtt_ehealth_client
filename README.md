@@ -57,11 +57,100 @@ sudo ./example
 See https://www.cloudmqtt.com/ for a free hosted broker
 
 
-### Test it using Mosquitto
+### Host your own Mosquitto broker
+* Install Mosquitto (on your VPS)
+```
+apt-get update
+apt-get install build-essential libwrap0-dev libssl-dev libc-ares-dev uuid-dev xsltproc
+sudo apt-get install mosquitto
+```
+* Create a new user and store its credentials in a password file
+```
+mosquitto_passwd -c /etc/mosquitto/pwfile
+```
+* Create a new configuration file from the example
+```
+cp /etc/mosquitto/mosquitto.conf.example /etc/mosquitto/mosquitto.conf
+nano /etc/mosquitto/mosquitto.conf
+```
+* Add your own info in mosquitto.conf
+```
+listener 1883 <VPS_IP>
+connection_messages true
+log_timestamp true
+allow_anonymous false
+password_file /etc/mosquitto/pwfile
+```
+* Update links
+```
+/sbin/ldconfig
+```
+* Start the broker in the background
+```
+mosquitto -c /etc/mosquitto/mosquitto.conf -d 
+```
+
+### Test it 
+* If you didn't install your own broker
 ```
 sudo apt-get install mosquitto-dev
 sudo service mosquitto start
-mosquitto_sub -h <broker_adress> -t <topic>
+mosquitto_sub -h 127.0.0.1 -t <topic>
 ```
-Make sure you start mosquitto_sub before sending any data.
+* With your own broker
+```
+mosquitto_sub -h <broker_adress> -P <port> -t <topic> -u <user> -p <password> 
+```
+### Allow WebSocket in Mosquitto to display real-time data in a browser
+The Paho Javascript library allows you to retrieve real-time data from the broker using WebSockets. However mosquitto 1.4.10, which is available through apt-get, doesn't allow websockets. We need to build mosquitto 1.4.x (using Mosquitto 1.4.2 here) manually.
+* Install libwebsockets
+We prepare the build system.
+```
+sudo apt-get update
+sudo apt-get install build-essential python quilt devscripts python-setuptools python3
+sudo apt-get install libssl-dev
+sudo apt-get install cmake
+sudo apt-get install libc-ares-dev
+sudo apt-get install uuid-dev
+sudo apt-get install daemon
+```
+Then we download, build and install libwebsockets.
+```
+wget http://git.libwebsockets.org/cgi-bin/cgit/libwebsockets/snapshot/libwebsockets-1.4-chrome43-firefox-36.tar.gz
+tar zxvf libwebsockets-1.4-chrome43-firefox-36.tar.gz
+cd libwebsockets-1.4-chrome43-firefox-36
+mkdir build
+cd build
+cmake ..
+sudo make install
+sudo ldconfig
+```
+* Installing Mosquitto 1.4.2
+```
+wget http://mosquitto.org/files/source/mosquitto-1.4.2.tar.gz
+tar zxvf mosquitto-1.4.2.tar.gz
+cd mosquitto-1.4.2
+```
+Modify **config.mk** by replacing WITH_WEBSOCKETS:=no with WITH_WEBSOCKETS:=yes , then :
+```
+make
+sudo make install
+```
+* Adding the WebSocket port in **mosquitto.conf**
+```
+nano /etc/mosquitto/mosquitto.conf
+```
+Modify **mosquitto.conf** by adding the two following lines :
+```
+port 1884
+protocol websockets
+```
+Make sure you keep the default port (1883) if you want to keep subscribing with your other MQTT clients.
+* Restart the mosquitto service
+```
+sudo service mosquitto stop
+mosquitto -c /etc/mosquitto/mosquitto.conf -d 
+```
+
+Et voilà !
 
