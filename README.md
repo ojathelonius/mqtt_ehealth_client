@@ -86,7 +86,7 @@ password_file /etc/mosquitto/pwfile
 ```
 * Start the broker in the background
 ```
-mosquitto -c -d /etc/mosquitto/mosquitto.conf
+mosquitto -c /etc/mosquitto/mosquitto.conf -d 
 ```
 
 ### Test it 
@@ -100,3 +100,55 @@ mosquitto_sub -h 127.0.0.1 -t <topic>
 ```
 mosquitto_sub -h <broker_adress> -P <port> -t <topic> -u <user> -p <password> 
 ```
+### Allow WebSocket in Mosquitto to display real-time data in a browser
+The Paho Javascript library allows you to retrieve real-time data from the broker using WebSockets. However mosquitto 1.4.10, which is available through apt-get, doesn't allow websockets. We need to build mosquitto 1.4.x (using Mosquitto 1.4.2 here) manually.
+* Install libwebsockets
+We prepare the build system.
+```
+sudo apt-get update
+sudo apt-get install build-essential python quilt devscripts python-setuptools python3
+sudo apt-get install libssl-dev
+sudo apt-get install cmake
+sudo apt-get install libc-ares-dev
+sudo apt-get install uuid-dev
+sudo apt-get install daemon
+```
+Then we download, build and install libwebsockets.
+```
+wget http://git.libwebsockets.org/cgi-bin/cgit/libwebsockets/snapshot/libwebsockets-1.4-chrome43-firefox-36.tar.gz
+tar zxvf libwebsockets-1.4-chrome43-firefox-36.tar.gz
+cd libwebsockets-1.4-chrome43-firefox-36
+mkdir build
+cd build
+cmake ..
+sudo make install
+sudo ldconfig
+```
+* Installing Mosquitto 1.4.2
+```
+wget http://mosquitto.org/files/source/mosquitto-1.4.2.tar.gz
+tar zxvf mosquitto-1.4.2.tar.gz
+cd mosquitto-1.4.2
+```
+Modify **config.mk** by replacing WITH_WEBSOCKETS:=no with WITH_WEBSOCKETS:=yes , then :
+```
+make
+sudo make install
+```
+* Adding the WebSocket port in **mosquitto.conf**
+```
+nano /etc/mosquitto/mosquitto.conf
+```
+Modify **mosquitto.conf** by adding the two following lines :
+```
+port 1884
+protocol websockets
+```
+Make sure you keep the default port (1883) if you want to keep subscribing with your other MQTT clients.
+* Restart the mosquitto service
+```
+sudo service mosquitto stop
+mosquitto -c /etc/mosquitto/mosquitto.conf -d 
+```
+
+Et voilà !
