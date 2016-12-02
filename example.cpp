@@ -11,7 +11,7 @@
 #include "lib/mqtt/mqtt_client_config.h"
 
 // Enable below to make it work on Raspberry
-// #include "eHealth.h"
+#include "lib/eHealth/eHealth.h"
 
 Mqtt_client_config mqtt_client_config;
 
