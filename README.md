@@ -95,6 +95,7 @@ mosquitto -c /etc/mosquitto/mosquitto.conf -d
 * If you didn't install your own broker
 ```
 sudo apt-get install mosquitto-dev
+sudo apt-get install mosquitto-clients
 sudo service mosquitto start
 mosquitto_sub -h 127.0.0.1 -t <topic>
 ```
