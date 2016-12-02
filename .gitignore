@@ -9,3 +9,4 @@ glucometer
 positionometer
 pulsioximeter
 temperature
+mqtt_client_config.json
