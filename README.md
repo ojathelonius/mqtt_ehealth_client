@@ -4,7 +4,7 @@ All this project does is retrieve data from the sensors and send it to a broker,
 
 See https://github.com/ojathelonius/mqtt_ehealth_subscriber to have an overview of how to subscribe to the broker using NodeJS.
 
-Important note : the **master branch** allows **simulating data** received from eHealth sensors. The **dev branch** allows you to receive **actual data** from the sensors, thus includes eHealth and arduPi libraries. Please check out the dev branch if you want to make it work on a Raspberry.
+Important note : the **master branch** allows **simulating data** received from eHealth sensors. The **dev branch** allows you to receive **actual data** from the sensors, thus includes eHealth and arduPi libraries and requires bcm2835 library. Please check out the dev branch if you want to make it work on a Raspberry.
 
 ## Getting started
 ### Install openSSL
@@ -34,6 +34,19 @@ sudo cp -r . /usr/local/lib
 * Updating ld
 ```
 sudo ldconfig
+```
+
+
+### Install the bcm2835 library
+* Copying files
+```
+http://www.airspayce.com/mikem/bcm2835/bcm2835-1.50.tar.gz
+tar zxvf bcm2835-1.50.tar.gz
+cd bcm2835-1.50
+./configure
+make
+sudo make check
+sudo make install
 ```
 
 ### Cloning the client on the Raspberry
