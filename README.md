@@ -37,16 +37,9 @@ sudo ldconfig
 ```
 
 
-### Install the bcm2835 library
-* Copying files
+### Install arduPi and bcm2835 libraries
 ```
-http://www.airspayce.com/mikem/bcm2835/bcm2835-1.50.tar.gz
-tar zxvf bcm2835-1.50.tar.gz
-cd bcm2835-1.50
-./configure
-make
-sudo make check
-sudo make install
+wget http://www.cooking-hacks.com/media/cooking/images/documentation/raspberry_arduino_shield/raspberrypi2.zip && unzip raspberrypi2.zip && cd cooking/arduPi && chmod +x install_arduPi && ./install_arduPi && rm install_arduPi && cd ../..
 ```
 
 ### Cloning the client on the Raspberry
