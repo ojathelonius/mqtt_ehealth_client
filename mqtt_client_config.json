@@ -6,7 +6,7 @@
     "user_credentials": {
         "user": "ehealth",
         "password": "password",
-        "client_id": "ehealth"
+        "client_id": "admin"
     },
     "options": {
         "topic": "ehealth",

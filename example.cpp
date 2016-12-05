@@ -31,9 +31,13 @@ void loop(mqtt::iasync_client& client) {
     // int air = eHealth.getAirFlow();
     // eHealth.airFlowWave(air);
     int air = getAirFlow();
-
+    int pulsio= getAirFlow();
+    int blood = getAirFlow();
     // Syntax is the following : sendFunction(client, data, "type", true);
     sendInteger(client, air, "airflow", true);
+    sendInteger(client, pulsio, "pulsiometer", true);
+    sendInteger(client, blood, "bloodpressure", true);
+
     sleep(mqtt_client_config.delay);
 }
 

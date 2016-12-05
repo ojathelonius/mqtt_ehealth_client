@@ -1,4 +1,5 @@
 \ehealth*
+\admin*
 example
 airflow
 bloodpressure
@@ -9,3 +10,4 @@ glucometer
 positionometer
 pulsioximeter
 temperature
+*.msg
