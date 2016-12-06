@@ -43,7 +43,7 @@ void loop(mqtt::iasync_client& client) {
     if(temp != 0){
          sendFloat(client, temp, "temperature", true);
     }
-    if(conductance != -1){
+    if(conductance < 0){
          sendFloat(client, conductance, "conductance", true);
     }
     if(resistance < 1000000){
