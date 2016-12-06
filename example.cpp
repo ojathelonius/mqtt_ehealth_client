@@ -14,34 +14,46 @@
 #include "lib/eHealth/eHealth.h"
 
 Mqtt_client_config mqtt_client_config;
+int cont = 0;
+
+void readPulsioximeter();
+void loop();
+
+void setup() {
+ eHealth.initPulsioximeter();
+ attachInterrupt(6, readPulsioximeter, RISING);
+}
 
 inline void sleep(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-void loop();
 
-// Getting random data for demo purposes
-int  getAirFlow() {
-    return rand() % (100 + 1) + 100;
-}
 
 void loop(mqtt::iasync_client& client) {
-    // Enable below to make it work on the Raspberry, using airflow data
-    // int air = eHealth.getAirFlow();
-    // eHealth.airFlowWave(air);
-    int air = getAirFlow();
+    int air = eHealth.getAirFlow();
+    int bpm = eHealth.getBPM();
+    float temp = eHealth.getTemperature();
 
-    // Syntax is the following : sendFunction(client, data, "type", true);
     sendInteger(client, air, "airflow", true);
+    sendInteger(client, bpm, "bpm", true);
+    sendFloat(client, temp, "temperature", true);
     sleep(mqtt_client_config.delay);
 }
 
-// void sendToBroker(){};
+void readPulsioximeter(){
+    cont ++;
+    if (cont == 50) { //Get only one 50 measures to reduce the latency
+        eHealth.readPulsioximeter();
+        cont = 0;
+    }
+}
 
 int main() {
     // Loading configuration file
     loadConfig();
+
+    // Set up sensors
 
     // Creating the client item and connecting
     mqtt::async_client client("tcp://" + mqtt_client_config.host_address + ":" + std::to_string(mqtt_client_config.port), mqtt_client_config.client_id);
