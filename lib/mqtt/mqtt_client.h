@@ -11,7 +11,7 @@ extern "C" {
 #include "token.h"
 
 void sendInteger(mqtt::iasync_client &client, int data, std::string type, bool with_timestamp);
-void sendFloat(mqtt::iasync_client &client, int data, std::string type, bool with_timestamp);
+void sendFloat(mqtt::iasync_client &client, float data, std::string type, bool with_timestamp);
 void disconnectFrom(mqtt::iasync_client &client);
 void connectTo(mqtt::iasync_client &client);
 
