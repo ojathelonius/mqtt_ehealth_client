@@ -40,7 +40,7 @@ void loop(mqtt::iasync_client& client) {
     if(air != 0){
          sendInteger(client, air, "airflow", true);
     }
-    if(temp != 0){
+    if(temp != 0 && temp > 33){
          sendFloat(client, temp, "temperature", true);
     }
     if(conductance > 0 && conductance < 8){
