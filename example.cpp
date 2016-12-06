@@ -36,12 +36,19 @@ void loop(mqtt::iasync_client& client) {
     float temp = eHealth.getTemperature();
     float conductance = eHealth.getSkinConductance();
     float resistance = eHealth.getSkinResistance();
-
-    sendInteger(client, air, "airflow", true);
-    sendInteger(client, bpm, "bpm", true);
-    sendFloat(client, temp, "temperature", true);
-    sendFloat(client, conductance, "conductance", true);
-    sendFloat(client, resistance, "resistance", true);
+    // Absurd values are ignored
+    if(air != 0){
+         sendInteger(client, air, "airflow", true);
+    }
+    if(temp != 0){
+         sendFloat(client, temp, "temperature", true);
+    }
+    if(conductance != -1){
+         sendFloat(client, conductance, "conductance", true);
+    }
+    if(resistance < 1000000){
+        sendFloat(client, resistance, "resistance", true);
+    }
 
     sleep(mqtt_client_config.delay);
 }
