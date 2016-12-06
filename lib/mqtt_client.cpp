@@ -148,3 +148,42 @@ void sendInteger(mqtt::iasync_client& client, int data, std::string type, bool w
         std::cout << "Client not connected";
     }
 }
+
+void sendFloat(mqtt::iasync_client& client, float data, std::string type, bool with_timestamp) {
+    // Final JSON output looks like the following :
+    // { "type" : "type", "data" : 433, "client_id" : "client_id", "timestamp" : 1478294310 }
+    std::string data_string = std::to_string(data);
+    std::string string_json;
+    callback    cb;
+
+    client.set_callback(cb);
+
+    if (with_timestamp) {
+        string_json = "{ \"type\" : \"" + type + "\", \"data\" : " + data_string + ", \"client_id\" : \"" + mqtt_client_config.client_id + "\", \"timestamp\" : " + std::to_string(std::time(0)) + " }";
+    }
+    else
+    {
+        string_json = "{ \"type\" : \"" + type + "\", \"data\" : " + data_string + ", \"client_id\" : \"" + mqtt_client_config.client_id + " }";
+    }
+    char const *char_json = string_json.c_str();
+
+    if (client.is_connected()) {
+        try {
+            std::cout << "Sending message..." << std::flush;
+            mqtt::idelivery_token_ptr pubtok;
+            pubtok = client.publish(mqtt_client_config.topic, char_json, std::strlen(char_json), mqtt_client_config.qos, false);
+            pubtok->wait_for_completion(mqtt_client_config.timeout);
+
+            // Remaining tokens
+            std::vector<mqtt::idelivery_token_ptr> toks = client.get_pending_delivery_tokens();
+
+            if (!toks.empty()) std::cout << "Error : pending delivery token remaining !" << std::endl;
+        }
+        catch (const mqtt::exception& exc) {
+            std::cerr << "Error: " << exc.what() << std::endl;
+        }
+    }
+    else {
+        std::cout << "Client not connected";
+    }
+}
